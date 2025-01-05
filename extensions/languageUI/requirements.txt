@@ -1,0 +1,6 @@
+nltk
+rapidfuzz
+pyspellchecker
+langchain
+huggingface_hub
+langchain_huggingface

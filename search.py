@@ -12,6 +12,8 @@ def search(term):
 
         term = term.replace("\n", "")
 
+        term = str(term)
+
         results = []
         nodes = GD.nodes["nodes"]
         for node in nodes:

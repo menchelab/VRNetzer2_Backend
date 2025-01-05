@@ -364,7 +364,7 @@ def join(message):
         func(message)
     room = flask.session.get("room")
     join_room(room)
-    print(message["usr"])
+    print("JOINING ROOM:", message["usr"])
 
     print(
         webfunc.bcolors.WARNING

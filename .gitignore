@@ -12,15 +12,16 @@ temp-files/
 *.json
 
 openAI_KEY_doNOTcommit.txt
+HF_token_doNOTcommit.txt
+
 static/TTSaudio/
 extensions/whisperSpeechRecognition/static/WhisperAudio/
 python_tools/data
-extensions/*
+extensions/documentation
 **/**.log**
 !extensions/documentation/
 !extensions/whisperSpeechRecognition/
 !extensions/load_extensions.py
 !extensions/install_requirements.sh
 !extensions/install_requirements.ps1
-
-HF_token_doNOTcommit.txt
+extensions/languageUI/LUI_funcs/OpenAI_token_doNOTcommit.txt
