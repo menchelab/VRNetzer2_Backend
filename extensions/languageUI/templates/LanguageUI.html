@@ -82,6 +82,7 @@
                 .then((json) => {
                     chatwin.innerHTML += '<br><b>HUMAN ' + " | " + username + " : " + text + "<br>"; 
                     chatwin.innerHTML += "<br><b>ENGINE | result : " + JSON.stringify(json) + '<br>';
+
                     chatwin.scrollTop = chatwin.scrollHeight;  
 
                     document.getElementById("LUItextinput").shadowRoot.getElementById("text").value = '';

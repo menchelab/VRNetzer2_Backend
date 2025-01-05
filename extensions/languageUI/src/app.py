@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import os.path
+import re 
 
 # import preview as pre
 import random
@@ -108,7 +109,25 @@ def language_ui_process():
 
     response = get_completion_huggingface(messages)
     
-    return jsonify(response)
+    # Extract the `text` field
+    text = response.get('text', '')
+
+    # Extract explanation
+    explanation_match = re.search(r"Explanation:\s*(.*)", text, re.DOTALL)
+    explanation = explanation_match.group(1).strip() if explanation_match else "No explanation found."
+
+    # Extract the JSON part for the function
+    function_match = re.search(r"Output:\s*({.*?})\s*Explanation:", text, re.DOTALL)
+    function_json = function_match.group(1).strip() if function_match else "{}"
+
+    # Parse the function JSON to extract the function name
+    try:
+        function_data = json.loads(function_json)
+        function_name = function_data.get("function", {}).get("name", "No function name found.")
+    except json.JSONDecodeError:
+        function_name = "Invalid JSON format for function."
+
+    return jsonify(explanation, function_name)
 
 
 

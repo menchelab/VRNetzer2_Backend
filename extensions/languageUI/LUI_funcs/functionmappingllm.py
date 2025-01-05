@@ -32,10 +32,6 @@ def get_api_token_from_file(file_path="extensions/languageUI/LUI_funcs/HF_token_
 
 
 
-
-#--------------------------------------------------------------------------------
-
-
 def get_completion_huggingface(messages, model="mistralai/Mistral-7B-Instruct-v0.2", temperature=0, max_tokens=300, tools=None, tool_choice="auto"):
     
     api_token = get_api_token_from_file()
@@ -67,7 +63,7 @@ def get_completion_huggingface(messages, model="mistralai/Mistral-7B-Instruct-v0
         {
             "type": "function",
             "function": {
-                "name": action_open_project,
+                "name": "action_open_project",
                 "description": "Opens a project by its name.",
                 "parameters": {
                     "type": "object",
@@ -84,55 +80,8 @@ def get_completion_huggingface(messages, model="mistralai/Mistral-7B-Instruct-v0
     ]
 
     
-    response = llm_chain.invoke({"messages": messages, "tools": tools, "tool_choice": tool_choice})
-    print("C_DEBUG: Complete Response received in GET_COMPLETION_HF : ", response)
-    
-    return response["text"]
-#--------------------------------------------------------------------------------
-
-
-
-
-
-
-
-def initialize_llm_chain():
-    print("C_DEBUG: Initializing OpenAI LLM Chain with LangChain...")
-
-    api_token = get_api_token_from_file()
-
-    llm = HuggingFaceEndpoint(
-        #model_name="mistralai/Mistral-7B-Instruct-v0.2",
-        api_key=api_token,
-        endpoint_url="https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
-    )
-
-    prompt = PromptTemplate(
-        input_variables=["question"],
-        template="""
-        You are an assistant that answers questions.
-
-        Input: {question}
-        """
-    )
-
-    return LLMChain(llm=llm, prompt=prompt)
-
-
-def get_response_from_huggingface(question):
-    print("C_DEBUG: Getting response from HuggingFace model...")
-    
-    llm_chain = initialize_llm_chain()
-    
-    try:
-        response = llm_chain.invoke({"question":question})
-        print("C_DEBUG: Response received : ", response["text"])
-        return response["text"]
-    
-    except Exception as e:
-        print("C_DEBUG: Exception occurred:", str(e))
-        return {"status": "error", "message": str(e)}
-
+    response = llm_chain.invoke({"messages": messages, "tools": tools, "tool_choice": tool_choice})    
+    return response
 
 
 
