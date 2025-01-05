@@ -108,26 +108,46 @@ def language_ui_process():
     ]
 
     response = get_completion_huggingface(messages)
+    #print("C_DEBUG: Complete Response:", response)
+
+    # Extract the action and output answer
+    response_text = response.get('text', '')
+    print("C_DEBUG: response_text : ", response_text)
     
-    # Extract the `text` field
-    text = response.get('text', '')
+    #make dict from response
+    dict_response = json.loads(response_text)
+        
+    function_name = dict_response['Function choice']
+    print("C_DEBUG: function_name : ", function_name)
+    
+    final_output = dict_response['Output']
+    print("C_DEBUG: final_output : ", final_output)
+    
+    final_parameters = dict_response['Parameters']
+    print("C_DEBUG: final_parameters : ", final_parameters)
+    
+    # Parse parameters based on the function name
+    if function_name == "action_open_project":
+        
+        project_name = final_parameters['project_name']
+        result = action_open_project(project_name)
 
-    # Extract explanation
-    explanation_match = re.search(r"Explanation:\s*(.*)", text, re.DOTALL)
-    explanation = explanation_match.group(1).strip() if explanation_match else "No explanation found."
+    elif function_name == "action_show_node_info":
+        
+        node_id = final_parameters['node_id']
+        result = action_show_node_info(node_id)
 
-    # Extract the JSON part for the function
-    function_match = re.search(r"Output:\s*({.*?})\s*Explanation:", text, re.DOTALL)
-    function_json = function_match.group(1).strip() if function_match else "{}"
+    elif function_name == "action_make_subnetwork":
+        
+        node_id = final_parameters['node_id']
+        result = action_make_subnetwork(node_id)
 
-    # Parse the function JSON to extract the function name
-    try:
-        function_data = json.loads(function_json)
-        function_name = function_data.get("function", {}).get("name", "No function name found.")
-    except json.JSONDecodeError:
-        function_name = "Invalid JSON format for function."
+    else:
+        result = f"Function '{function_name}' not found or no action could be matched."
 
-    return jsonify(explanation, function_name)
+    # Return the chosen function name and the response/output answer
+    return jsonify({"function_name": function_name, "response": result})
+
 
 
 

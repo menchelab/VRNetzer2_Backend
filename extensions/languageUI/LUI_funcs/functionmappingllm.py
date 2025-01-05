@@ -44,39 +44,82 @@ def get_completion_huggingface(messages, model="mistralai/Mistral-7B-Instruct-v0
     )
     
     prompt = PromptTemplate(
-        input_variables=["messages"],
-        template="""
-        You are an assistant that matches functions from tools to user input and returns the output answer and an action chosen based on user input.
+        input_variables=["messages", "tools"],
+    template="""
+    You are an assistant that matches user inputs to the most relevant function from the provided tools list. For each user input, select the best tool and provide the following information in a structured format:
+    
+    1. Function choice: The name of the selected function.
+    2. Parameters: A JSON object containing the necessary parameters for the function.
+    3. Output: A brief description of what the selected function would do.
+    4. Action: A short explanation of why this function was chosen.
 
-        Input: {messages}
-        
-        Response: 
-        "tools": {tools}
-        "tool_choice": {tool_choice}
-        """
+    Tools: {tools}
+    
+    User input: {messages}
+    
+    Respond strictly in the following format and make it json format:
+    
+    Function choice: <function_name>
+    Parameters: <JSON object>
+    Output: <description>
+    Action: <explanation>
+    """
     )
     
     llm_chain = LLMChain(llm=llm, prompt=prompt)
     
-  
     tools = [
         {
             "type": "function",
             "function": {
                 "name": "action_open_project",
-                "description": "Opens a project by its name.",
+                "description": "Opens a project by its exact name. Use this when the input mentions opening a project.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "projectname": {
+                        "project_name": {
                             "type": "string",
-                            "description": "Project to open.",
+                            "description": "The name of the project to open.",
                         },
                     },
-                    "required": ["projectname"],
+                    "required": ["project_name"],
                 },
-            },   
-        }
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "action_show_node_info",
+                "description": "Shows detailed information about a specific node by its ID.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "node_id": {
+                            "type": "string",
+                            "description": "The unique ID of the node to retrieve information for.",
+                        },
+                    },
+                    "required": ["node_id"],
+                },
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "action_make_subnetwork",
+                "description": "Creates a subnetwork centered on a specific node. Use this when the input mentions creating or visualizing a network.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "node_id": {
+                            "type": "string",
+                            "description": "The unique ID of the node to center the subnetwork around.",
+                        },
+                    },
+                    "required": ["node_id"],
+                },
+            },
+        },
     ]
 
     
