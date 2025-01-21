@@ -66,6 +66,7 @@ def get_completion_huggingface(messages, model="mistralai/Mistral-7B-Instruct-v0
     """
     )
     
+    
     llm_chain = LLMChain(llm=llm, prompt=prompt)
     
     tools = [

@@ -10,7 +10,19 @@ from flask_socketio import emit
 
 
 
-all_projects_text = '\n'.join(GD.listProjects())
+def action_list_all_projects():
+    """
+    Lists all the projects available in the system.
+    This function retrieves the list of all projects and returns them as a string.
+    Args:
+        None
+    Returns:
+        str: A string containing the names of all projects available in the system.
+    """
+    all_projects_text = ' , '.join(GD.listProjects())
+    
+    return f"Project not found. Please choose from list of projects: {all_projects_text}"
+
 
 
 import event_handler.execute_events.drop_down_events as drop_down_events
@@ -30,8 +42,7 @@ def action_open_project(projectname):
 
     if not matching_projects:
         print(f"ERROR: Project '{projectname}' not found in the project list.")
-        
-        return
+        return action_list_all_projects()
 
     # Use the project name as it is stored in GD list
     projectname = matching_projects[0]
@@ -53,6 +64,11 @@ def action_show_node_info(nodeid):
         None
     """
 
+    # test for nodeid
+    if not nodeid:
+        # If nodeid is empty, return an error message
+        return "ERROR: Please provide a node ID to retrieve information."
+    
     # search function in search.py
     response = search(str(nodeid))
     print("PROGRESS: Showing node information... : ", response)
